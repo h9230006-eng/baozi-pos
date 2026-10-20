@@ -20,13 +20,13 @@
     .promo-banner { font-size: 0.78rem; background: rgba(255, 255, 255, 0.2); padding: 2px 6px; border-radius: 10px; display: inline-block; }
     .container { max-width: 600px; margin: 0 auto; padding: 8px; }
     
-    /* 網格排版：每行 3 個 */
-    .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
-    .item-card { background: var(--card-bg); border-radius: 8px; padding: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); display: flex; flex-direction: column; justify-content: space-between; border: 1px solid #e0e0e0; }
-    .item-name { font-size: 0.85rem; font-weight: bold; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .price-tag { font-size: 0.75rem; color: #666; margin-bottom: 4px; display: flex; justify-content: space-between; }
-    .qty-row { display: flex; gap: 4px; }
-    select.qty-select { font-size: 0.8rem; padding: 2px; border-radius: 4px; border: 1px solid #ccc; background-color: #f8f9fa; flex: 1; text-align: center; font-weight: bold; }
+    /* 改為每行 2 個（兩欄式），確保完全在畫面內不跑版 */
+    .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
+    .item-card { background: var(--card-bg); border-radius: 10px; padding: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); display: flex; flex-direction: column; justify-content: space-between; border: 1px solid #e0e0e0; }
+    .item-name { font-size: 0.95rem; font-weight: bold; margin-bottom: 6px; }
+    .price-tag { font-size: 0.85rem; color: #666; margin-bottom: 6px; display: flex; justify-content: space-between; }
+    .qty-row { display: flex; gap: 6px; }
+    select.qty-select { font-size: 0.9rem; padding: 4px; border-radius: 6px; border: 1px solid #ccc; background-color: #f8f9fa; flex: 1; text-align: center; font-weight: bold; }
 
     .gift-container { background: #e8f5e9; border: 2px dashed #2e7d32; border-radius: 10px; padding: 10px; margin-bottom: 10px; }
     .gift-title { color: #2e7d32; font-weight: bold; font-size: 0.9rem; margin-bottom: 6px; }
@@ -55,7 +55,7 @@
 <body>
   <header>
     <h1>🥟 包子饅頭 POS 收銀機</h1>
-    <div class="promo-banner">優惠：滿 10 顆送 1 顆（方格精簡版）</div>
+    <div class="promo-banner">優惠：滿 10 顆送 1 顆（兩欄精簡版）</div>
   </header>
   <div class="container">
     <div id="menu-container" class="menu-grid"></div>
@@ -123,7 +123,7 @@
         
         card.innerHTML = `
           <div>
-            <div class="item-name" title="${item.name}">${item.name}</div>
+            <div class="item-name">${item.name}</div>
             <div class="price-tag"><span>$${item.freshPrice}</span><span style="color:#e65100;">即$${item.clearancePrice}</span></div>
           </div>
           <div class="qty-row">
