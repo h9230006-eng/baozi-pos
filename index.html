@@ -33,7 +33,7 @@
     .gift-container { background: #e8f5e9; border: 2px dashed #2e7d32; border-radius: 12px; padding: 12px; margin-top: 15px; margin-bottom: 10px; }
     .gift-title { color: #2e7d32; font-weight: bold; font-size: 1rem; margin-bottom: 8px; }
     .gift-row { margin-top: 6px; display: flex; flex-direction: column; gap: 4px; }
-    .gift-row select { width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #81c784; font-size: 0.95rem; background: white; }
+    .gift-row select { width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #81c784; font-size: 0.95rem; background: white; font-weight: bold; color: #2e7d32; }
     .summary-card { background: #ffffff; border: 2px solid #8b4513; border-radius: 12px; padding: 12px; margin-bottom: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
     .summary-title { font-size: 1.05rem; font-weight: bold; color: var(--primary-color); border-bottom: 2px solid #f5f5f7; padding-bottom: 6px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
     .summary-list { list-style: none; }
@@ -55,12 +55,12 @@
 <body>
   <header>
     <h1>🥟 包子饅頭 POS 收銀機</h1>
-    <div class="promo-banner">優惠：滿 10 顆送 1 顆（自動對應贈送低價品項）</div>
+    <div class="promo-banner">優惠：滿 10 顆送 1 顆（自動對應送低價品項）</div>
   </header>
   <div class="container">
     <div id="menu-container"></div>
     <div id="gift-container" class="gift-container" style="display: none;">
-      <div class="gift-title">🎁 已滿 10 顆！獲得 <span id="gift-count">0</span> 個免費贈品（限贈送購買品項中較低價者）</div>
+      <div class="gift-title">🎁 已滿 10 顆！獲得 <span id="gift-count">0</span> 個免費贈品</div>
       <div id="gift-selects"></div>
     </div>
     <div id="summary-card" class="summary-card">
@@ -123,14 +123,8 @@
         card.innerHTML = `
           <div class="item-header">
             <span class="item-name">${item.name}</span>
-            <span class="item-subtotal" id="subtotal-${item.id}">$0</span>
-          </div>
-          <div class="price-row">
-            <div><span class="badge badge-fresh">當天現做</span> <span class="price-text">$${item.freshPrice} 元</span></div>
-            <select class="qty-select" onchange="updateQty('${item.id}', 'fresh', this.value)">${freshOptions}</select>
-          </div>
-          <div class="price-row">
-            <div><span class="badge badge-clearance">前批即期</span> <span class="price-text">$${item.clearancePrice} 元 (-$2)</span></div>
+            <span class="item-subtotal" id="subtotal-${item.id}">$0</span> </div> <div class="price-row"> <div><span class="badge badge-fresh">當天現做</span> <span class="price-text">$${item.freshPrice} 元</span></div>
+            <select class="qty-select" onchange="updateQty('${item.id}', 'fresh', this.value)">${freshOptions}</select> </div> <div class="price-row"> <div><span class="badge badge-clearance">前批即期</span> <span class="price-text">$${item.clearancePrice} 元 (-$2)</span></div>
             <select class="qty-select" onchange="updateQty('${item.id}', 'clearance', this.value)">${clearanceOptions}</select>
           </div>
         `;
@@ -168,24 +162,22 @@
       if (giftCount > 0) {
         giftContainer.style.display = 'block';
 
-        // 收集所有「已購買」的品項，並依現做價格由低到高排序
-        let purchasedItems = [];
+        // 收集所有「已購買」的單品（按價格由低到高排序）
+        let purchasedList = [];
         items.forEach(item => {
           const count = state[item.id].fresh + state[item.id].clearance;
           for (let i = 0; i < count; i++) {
-            purchasedItems.push({ id: item.id, name: item.name, price: item.freshPrice });
+            purchasedList.push({ id: item.id, name: item.name, price: item.freshPrice });
           }
         });
-        purchasedItems.sort((a, b) => a.price - b.price);
+        purchasedList.sort((a, b) => a.price - b.price);
 
-        // 調整贈品陣列長度
-        while (selectedGifts.length < giftCount) {
-          // 預設自動選擇目前已購買中最便宜的品項
-          let defaultGift = purchasedItems.length > 0 ? purchasedItems[Math.min(selectedGifts.length, purchasedItems.length - 1)].id : items[0].id;
-          selectedGifts.push(defaultGift);
-        }
-        if (selectedGifts.length > giftCount) {
-          selectedGifts = selectedGifts.slice(0, giftCount);
+        // 重置/調整贈品選擇
+        selectedGifts = [];
+        for (let i = 0; i < giftCount; i++) {
+          // 預設第 i 個贈品為購買清單中第 i 便宜的商品
+          let target = purchasedList[i] || purchasedList[purchasedList.length - 1] || items[0];
+          selectedGifts.push(target.id);
         }
 
         giftSelects.innerHTML = '';
@@ -193,20 +185,20 @@
           const div = document.createElement('div');
           div.className = 'gift-row';
 
-          // 限制只能選購「價格小於或等於已購買商品」或直接從已購買清單中選取合適的低價品
-          // 這裡我們直接提供所有已購買過的品項（或全品項中價格不大於當前第 i 個最便宜基準者的品項）供選擇
-          let maxAllowedPrice = purchasedItems.length > 0 ? purchasedItems[Math.min(i, purchasedItems.length - 1)].price : 999;
-          
-          let availableItems = items.filter(item => item.freshPrice <= maxAllowedPrice);
-          if (availableItems.length === 0) availableItems = items; // 預防萬一
+          // 限制選擇的最高價位：不能超過該贈品基準品項的價格
+          let baseItem = purchasedList[i] || purchasedList[purchasedList.length - 1] || items[0];
+          let maxPrice = baseItem.price;
 
-          let options = availableItems.map(item => {
+          // 找出所有 <= maxPrice 的品項供挑選
+          let allowedItems = items.filter(item => item.freshPrice <= maxPrice);
+
+          let options = allowedItems.map(item => {
             const isSelected = selectedGifts[i] === item.id ? 'selected' : '';
             return `<option value="${item.id}" ${isSelected}>${item.name} ($${item.freshPrice})</option>`;
           }).join('');
 
           div.innerHTML = `
-            <label style="font-size: 0.85rem; color: #2e7d32; font-weight: bold;">贈品 ${i + 1} （限選 $${maxAllowedPrice} 以下）：</label>
+            <label style="font-size: 0.85rem; color: #2e7d32; font-weight: bold;">贈品 ${i + 1} （限選 $${maxPrice} 以下品項）：</label>
             <select onchange="updateGiftSelection(${i}, this.value)">
               ${options}
             </select>
@@ -229,6 +221,7 @@
       const detailCountTag = document.getElementById('detail-count-tag');
       summaryList.innerHTML = '';
       let hasItems = false, totalItemCount = 0;
+
       items.forEach(item => {
         const freshQty = state[item.id].fresh, clearanceQty = state[item.id].clearance;
         if (freshQty > 0) {
@@ -240,52 +233,9 @@
           summaryList.innerHTML += `<li class="summary-item"><span>${item.name} (前批即期) × ${clearanceQty}</span><span>$${clearanceQty * item.clearancePrice}</span></li>`;
         }
       });
-      if (giftCount > 0) {
+
+      if (giftCount > 0 && selectedGifts.length > 0) {
         selectedGifts.forEach((giftId, index) => {
           const giftItem = items.find(i => i.id === giftId);
           if (giftItem) {
-            summaryList.innerHTML += `<li class="summary-item gift-tag"><span>🎁 贈品 ${index + 1}：${giftItem.name}</span><span>免費 ($0)</span></li>`;
-          }
-        });
-      }
-      if (!hasItems) {
-        summaryList.innerHTML = '<li class="summary-item" style="color: #888; justify-content: center;">請在上方選擇商品數量</li>';
-        detailCountTag.innerText = '尚未選購';
-      } else {
-        detailCountTag.innerText = `共 ${totalItemCount} 顆 + 贈品 ${giftCount} 顆`;
-      }
-    }
-
-    function calculateChange() {
-      const cash = parseFloat(document.getElementById('cash-input').value) || 0;
-      let totalPrice = 0;
-      items.forEach(item => { totalPrice += (state[item.id].fresh * item.freshPrice) + (state[item.id].clearance * item.clearancePrice); });
-      const change = cash - totalPrice;
-      const changeEl = document.getElementById('change-amount');
-      if (cash > 0) {
-        changeEl.innerText = change >= 0 ? `$${change}` : `還差 $${Math.abs(change)}`;
-        changeEl.style.color = change >= 0 ? '#2e7d32' : '#d9534f';
-      } else {
-        changeEl.innerText = '$0';
-        changeEl.style.color = '#2e7d32';
-      }
-    }
-
-    function resetForm() {
-      items.forEach(item => { state[item.id] = { fresh: 0, clearance: 0 }; });
-      document.getElementById('cash-input').value = '';
-      selectedGifts = [];
-      renderMenu();
-      calculateTotal();
-    }
-
-    function completeOrder() {
-      if (parseInt(document.getElementById('total-qty').innerText, 10) === 0) { alert('尚未選擇任何商品！'); return; }
-      alert('訂單完成！按下確定後將清空畫面準備下一筆交易。');
-      resetForm();
-    }
-
-    renderMenu();
-  </script>
-</body>
-</html>
+            summaryList.innerHTML += `<li class="summary-item gift-tag"><span>🎁 贈品
