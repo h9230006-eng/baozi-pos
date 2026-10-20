@@ -61,7 +61,7 @@
 <body>
   <header>
     <h1>🥟 包子饅頭 POS 收銀機</h1>
-    .promo-banner { font-size: 0.78rem; background: rgba(255, 255, 255, 0.2); padding: 2px 6px; border-radius: 10px; display: inline-block; }
+    <div class="promo-banner">優惠：滿 10 顆送 1 顆（精簡對齊版）</div>
   </header>
   <div class="container">
     <div id="menu-container" class="menu-grid"></div>
@@ -223,7 +223,6 @@
           div.className = 'gift-row';
           let maxPrice = groupMaxPrices[i];
           
-          // 嚴格修正：贈品選單只能選擇「今日標準價格」小於或等於該組最低價限制的品項
           let allowedItems = items.filter(item => item.freshPrice <= maxPrice);
           if (allowedItems.length === 0) allowedItems = items;
 
