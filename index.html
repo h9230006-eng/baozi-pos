@@ -24,16 +24,15 @@
     .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
     .item-card { background: var(--card-bg); border-radius: 10px; padding: 8px 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); display: flex; flex-direction: column; justify-content: space-between; border: 1px solid #e0e0e0; }
     
-    .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
+    .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
     .item-name { font-size: 0.88rem; font-weight: bold; }
     .item-subtotal { font-size: 0.82rem; font-weight: bold; color: #1a73e8; }
-    
-    .card-prices { display: flex; gap: 8px; font-size: 0.78rem; color: #666; margin-bottom: 4px; }
-    .clearance-price { color: var(--clearance-color); }
 
     .card-selectors { display: flex; gap: 6px; align-items: center; }
-    .selector-col { flex: 1; display: flex; flex-direction: column; gap: 1px; }
-    .selector-label { font-size: 0.7rem; color: #555; font-weight: bold; text-align: center; }
+    .selector-col { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+    .selector-label { font-size: 0.75rem; font-weight: bold; text-align: center; }
+    .label-fresh { color: #2e7d32; }
+    .label-clearance { color: var(--clearance-color); }
     select.qty-select { font-size: 0.85rem; padding: 3px; border-radius: 6px; border: 1px solid #ccc; background-color: #f8f9fa; text-align: center; font-weight: bold; width: 100%; }
 
     .gift-container { background: #e8f5e9; border: 2px dashed #2e7d32; border-radius: 10px; padding: 10px; margin-bottom: 10px; }
@@ -134,19 +133,15 @@
               <span class="item-name">${item.name}</span>
               <span class="item-subtotal" id="subtext-${item.id}">合計$0</span>
             </div>
-            <div class="card-prices">
-              <span>現$${item.freshPrice}</span>
-              <span class="clearance-price">前$${item.clearancePrice}</span>
-            </div>
             <div class="card-selectors">
               <div class="selector-col">
-                <span class="selector-label">現</span>
+                <span class="selector-label label-fresh">現$${item.freshPrice}</span>
                 <select class="qty-select" id="fresh-${item.id}" onchange="updateQty('${item.id}', 'fresh', this.value)">
                   ${numOptions}
                 </select>
               </div>
               <div class="selector-col">
-                <span class="selector-label">即</span>
+                <span class="selector-label label-clearance">前$${item.clearancePrice}</span>
                 <select class="qty-select" id="clearance-${item.id}" onchange="updateQty('${item.id}', 'clearance', this.value)">
                   ${numOptions}
                 </select>
@@ -268,7 +263,7 @@
         }
         if (clearanceQty > 0) {
           hasItems = true; totalItemCount += clearanceQty;
-          summaryList.innerHTML += `<li class="summary-item"><span>${item.name}(即)×${clearanceQty}</span><span>$${clearanceQty * item.clearancePrice}</span></li>`;
+          summaryList.innerHTML += `<li class="summary-item"><span>${item.name}(前)×${clearanceQty}</span><span>$${clearanceQty * item.clearancePrice}</span></li>`;
         }
       });
 
