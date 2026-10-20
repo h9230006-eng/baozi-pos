@@ -20,7 +20,6 @@
     .promo-banner { font-size: 0.78rem; background: rgba(255, 255, 255, 0.2); padding: 2px 6px; border-radius: 10px; display: inline-block; }
     .container { max-width: 600px; margin: 0 auto; padding: 8px; }
     
-    /* 兩欄式精簡排版 */
     .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
     .item-card { background: var(--card-bg); border-radius: 10px; padding: 8px 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); display: flex; flex-direction: column; justify-content: space-between; border: 1px solid #e0e0e0; }
     
@@ -62,7 +61,7 @@
 <body>
   <header>
     <h1>🥟 包子饅頭 POS 收銀機</h1>
-    <div class="promo-banner">優惠：滿 10 顆送 1 顆（精簡對齊版）</div>
+    <div class="promo-banner">優惠：滿 10 顆送 1 顆（今日/昨日精簡版）</div>
   </header>
   <div class="container">
     <div id="menu-container" class="menu-grid"></div>
@@ -135,13 +134,13 @@
             </div>
             <div class="card-selectors">
               <div class="selector-col">
-                <span class="selector-label label-fresh">現$${item.freshPrice}</span>
+                <span class="selector-label label-fresh">今日$${item.freshPrice}</span>
                 <select class="qty-select" id="fresh-${item.id}" onchange="updateQty('${item.id}', 'fresh', this.value)">
                   ${numOptions}
                 </select>
               </div>
               <div class="selector-col">
-                <span class="selector-label label-clearance">前$${item.clearancePrice}</span>
+                <span class="selector-label label-clearance">昨日$${item.clearancePrice}</span>
                 <select class="qty-select" id="clearance-${item.id}" onchange="updateQty('${item.id}', 'clearance', this.value)">
                   ${numOptions}
                 </select>
@@ -186,14 +185,16 @@
       if (giftCount > 0) {
         giftContainer.style.display = 'block';
 
+        // 收集所有已購買的品項物件（包含其原價，用來比對品項價格高低）
         let allPurchasedItems = [];
         items.forEach(item => {
           const freshQty = state[item.id].fresh;
           const clearanceQty = state[item.id].clearance;
           for (let i = 0; i < freshQty; i++) { allPurchasedItems.push({ id: item.id, name: item.name, price: item.freshPrice }); }
-          for (let i = 0; i < clearanceQty; i++) { allPurchasedItems.push({ id: item.id, name: item.name, price: item.clearancePrice }); }
+          for (let i = 0; i < clearanceQty; i++) { allPurchasedItems.push({ id: item.id, name: item.name, price: item.freshPrice }); } // 贈品上限以該品項的標準今日價格來判定可選擇的品項範圍
         });
 
+        // 每 10 顆為一組，找出該組中價格最低的品項價格
         let groupMaxPrices = [];
         for (let g = 0; g < giftCount; g++) {
           let chunk = allPurchasedItems.slice(g * 10, (g + 1) * 10);
@@ -219,6 +220,8 @@
           const div = document.createElement('div');
           div.className = 'gift-row';
           let maxPrice = groupMaxPrices[i];
+          
+          // 允許選擇標準價格小於或等於該組最低品項價格的任何品項
           let allowedItems = items.filter(item => item.freshPrice <= maxPrice);
           if (allowedItems.length === 0) allowedItems = items;
 
@@ -233,7 +236,7 @@
           }).join('');
 
           div.innerHTML = `
-            <label style="font-size: 0.75rem; color: #2e7d32; font-weight: bold;">贈品 ${i + 1} (限 $${maxPrice} 以下)：</label>
+            <label style="font-size: 0.75rem; color: #2e7d32; font-weight: bold;">贈品 ${i + 1} (限選 $${maxPrice} 以下品項)：</label>
             <select onchange="updateGiftSelection(${i}, this.value)">${options}</select>
           `;
           giftSelects.appendChild(div);
@@ -259,11 +262,11 @@
         const freshQty = state[item.id].fresh, clearanceQty = state[item.id].clearance;
         if (freshQty > 0) {
           hasItems = true; totalItemCount += freshQty;
-          summaryList.innerHTML += `<li class="summary-item"><span>${item.name}(現)×${freshQty}</span><span>$${freshQty * item.freshPrice}</span></li>`;
+          summaryList.innerHTML += `<li class="summary-item"><span>${item.name}(今日)×${freshQty}</span><span>$${freshQty * item.freshPrice}</span></li>`;
         }
         if (clearanceQty > 0) {
           hasItems = true; totalItemCount += clearanceQty;
-          summaryList.innerHTML += `<li class="summary-item"><span>${item.name}(前)×${clearanceQty}</span><span>$${clearanceQty * item.clearancePrice}</span></li>`;
+          summaryList.innerHTML += `<li class="summary-item" style="color: #e65100; font-weight: bold;"><span>${item.name}(昨日)×${clearanceQty}</span><span>$${clearanceQty * item.clearancePrice}</span></li>`;
         }
       });
 
