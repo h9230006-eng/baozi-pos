@@ -10,44 +10,44 @@
       --bg-color: #f5f5f7;
       --card-bg: #ffffff;
       --text-color: #333333;
-      --discount-color: #d9534f;
       --fresh-color: #2e7d32;
       --clearance-color: #e65100;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background-color: var(--bg-color); color: var(--text-color); padding-bottom: 140px; user-select: none; }
-    header { background-color: var(--primary-color); color: white; text-align: center; padding: 12px 10px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
-    header h1 { font-size: 1.2rem; margin-bottom: 2px; }
-    .promo-banner { font-size: 0.82rem; background: rgba(255, 255, 255, 0.2); padding: 3px 8px; border-radius: 12px; display: inline-block; }
-    .container { max-width: 600px; margin: 0 auto; padding: 10px; }
-    .item-card { background: var(--card-bg); border-radius: 12px; padding: 12px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 8px; }
-    .item-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #eee; padding-bottom: 6px; }
-    .item-name { font-size: 1.1rem; font-weight: bold; }
-    .item-subtotal { font-weight: bold; color: #1a73e8; font-size: 1.1rem; }
-    .price-row { display: flex; justify-content: space-between; align-items: center; }
-    .badge { font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
-    .badge-fresh { background-color: #e8f5e9; color: var(--fresh-color); }
-    .badge-clearance { background-color: #fff3e0; color: var(--clearance-color); }
-    .price-text { font-size: 0.95rem; color: #555; }
-    select.qty-select { font-size: 1.1rem; padding: 4px 10px; border-radius: 8px; border: 1px solid #ccc; background-color: #f8f9fa; font-weight: bold; min-width: 65px; text-align: center; }
-    .gift-container { background: #e8f5e9; border: 2px dashed #2e7d32; border-radius: 12px; padding: 12px; margin-top: 15px; margin-bottom: 10px; }
-    .gift-title { color: #2e7d32; font-weight: bold; font-size: 1rem; margin-bottom: 8px; }
-    .gift-row { margin-top: 6px; display: flex; flex-direction: column; gap: 4px; }
-    .gift-row select { width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #81c784; font-size: 0.95rem; background: white; font-weight: bold; color: #2e7d32; }
-    .summary-card { background: #ffffff; border: 2px solid #8b4513; border-radius: 12px; padding: 12px; margin-bottom: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
-    .summary-title { font-size: 1.05rem; font-weight: bold; color: var(--primary-color); border-bottom: 2px solid #f5f5f7; padding-bottom: 6px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+    header { background-color: var(--primary-color); color: white; text-align: center; padding: 10px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
+    header h1 { font-size: 1.1rem; margin-bottom: 2px; }
+    .promo-banner { font-size: 0.78rem; background: rgba(255, 255, 255, 0.2); padding: 2px 6px; border-radius: 10px; display: inline-block; }
+    .container { max-width: 600px; margin: 0 auto; padding: 8px; }
+    
+    /* 網格排版：每行 3 個 */
+    .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
+    .item-card { background: var(--card-bg); border-radius: 8px; padding: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); display: flex; flex-direction: column; justify-content: space-between; border: 1px solid #e0e0e0; }
+    .item-name { font-size: 0.85rem; font-weight: bold; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .price-tag { font-size: 0.75rem; color: #666; margin-bottom: 4px; display: flex; justify-content: space-between; }
+    .qty-row { display: flex; gap: 4px; }
+    select.qty-select { font-size: 0.8rem; padding: 2px; border-radius: 4px; border: 1px solid #ccc; background-color: #f8f9fa; flex: 1; text-align: center; font-weight: bold; }
+
+    .gift-container { background: #e8f5e9; border: 2px dashed #2e7d32; border-radius: 10px; padding: 10px; margin-bottom: 10px; }
+    .gift-title { color: #2e7d32; font-weight: bold; font-size: 0.9rem; margin-bottom: 6px; }
+    .gift-row { margin-top: 4px; display: flex; flex-direction: column; gap: 2px; }
+    .gift-row select { width: 100%; padding: 6px; border-radius: 6px; border: 1px solid #81c784; font-size: 0.85rem; background: white; font-weight: bold; color: #2e7d32; }
+
+    .summary-card { background: #ffffff; border: 2px solid #8b4513; border-radius: 10px; padding: 10px; margin-bottom: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+    .summary-title { font-size: 0.95rem; font-weight: bold; color: var(--primary-color); border-bottom: 2px solid #f5f5f7; padding-bottom: 4px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
     .summary-list { list-style: none; }
-    .summary-item { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px dashed #eee; font-size: 0.95rem; }
+    .summary-item { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px dashed #eee; font-size: 0.85rem; }
     .gift-tag { color: #2e7d32; font-weight: bold; }
-    .footer-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); padding: 10px 15px; z-index: 100; }
+
+    .footer-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); padding: 8px 12px; z-index: 100; }
     .footer-content { max-width: 600px; margin: 0 auto; }
-    .total-row { display: flex; justify-content: space-between; font-size: 1rem; margin-bottom: 6px; font-weight: bold; }
-    .total-amount { color: #d9534f; font-size: 1.3rem; }
-    .cash-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 0.95rem; }
-    .cash-input { width: 90px; padding: 4px 8px; font-size: 1rem; border-radius: 6px; border: 1px solid #ccc; text-align: right; }
-    .change-text { color: #2e7d32; font-weight: bold; font-size: 1.1rem; }
-    .btn-group { display: flex; gap: 8px; }
-    .btn { flex: 1; padding: 10px; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; }
+    .total-row { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 4px; font-weight: bold; }
+    .total-amount { color: #d9534f; font-size: 1.15rem; }
+    .cash-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 0.85rem; }
+    .cash-input { width: 80px; padding: 3px 6px; font-size: 0.95rem; border-radius: 6px; border: 1px solid #ccc; text-align: right; }
+    .change-text { color: #2e7d32; font-weight: bold; font-size: 1rem; }
+    .btn-group { display: flex; gap: 6px; }
+    .btn { flex: 1; padding: 8px; border: none; border-radius: 6px; font-size: 0.9rem; font-weight: bold; cursor: pointer; }
     .btn-clear { background-color: #90a4ae; color: white; }
     .btn-checkout { background-color: #2e7d32; color: white; }
   </style>
@@ -55,18 +55,18 @@
 <body>
   <header>
     <h1>🥟 包子饅頭 POS 收銀機</h1>
-    <div class="promo-banner">優惠：滿 10 顆送 1 顆（按購物順序每 10 顆獨立計算最低價）</div>
+    <div class="promo-banner">優惠：滿 10 顆送 1 顆（方格精簡版）</div>
   </header>
   <div class="container">
-    <div id="menu-container"></div>
+    <div id="menu-container" class="menu-grid"></div>
     <div id="gift-container" class="gift-container" style="display: none;">
-      <div class="gift-title">🎁 已滿 10 顆！獲得 <span id="gift-count">0</span> 個免費贈品</div>
+      <div class="gift-title">🎁 獲得 <span id="gift-count">0</span> 個免費贈品</div>
       <div id="gift-selects"></div>
     </div>
     <div id="summary-card" class="summary-card">
       <div class="summary-title">
         <span>📋 購物明細核對</span>
-        <span id="detail-count-tag" style="font-size: 0.85rem; color: #666; font-weight: normal;">尚未選購</span>
+        <span id="detail-count-tag" style="font-size: 0.75rem; color: #666; font-weight: normal;">尚未選購</span>
       </div>
       <ul id="summary-list" class="summary-list">
         <li class="summary-item" style="color: #888; justify-content: center;">請在上方選擇商品數量</li>
@@ -76,7 +76,7 @@
   <div class="footer-bar">
     <div class="footer-content">
       <div class="total-row">
-        <span>購買總數量：<span id="total-qty" style="color:#d9534f;">0</span> 顆</span>
+        <span>總數：<span id="total-qty" style="color:#d9534f;">0</span> 顆</span>
         <span>應收金額：<span id="total-price" class="total-amount">$0</span></span>
       </div>
       <div class="cash-row">
@@ -84,8 +84,8 @@
         <span style="margin-left: auto;">找零：<span id="change-amount" class="change-text">$0</span></span>
       </div>
       <div class="btn-group">
-        <button class="btn btn-clear" onclick="resetForm()">清空重來</button>
-        <button class="btn btn-checkout" onclick="completeOrder()">完成結帳</button>
+        <button class="btn btn-clear" onclick="resetForm()">清空</button>
+        <button class="btn btn-checkout" onclick="completeOrder()">結帳</button>
       </div>
     </div>
   </div>
@@ -116,21 +116,18 @@
       items.forEach(item => {
         const card = document.createElement('div');
         card.className = 'item-card';
-        let freshOptions = '';
-        for (let i = 0; i <= 30; i++) { freshOptions += `<option value="${i}" ${state[item.id].fresh === i ? 'selected' : ''}>${i}</option>`; }
-        let clearanceOptions = '';
-        for (let i = 0; i <= 30; i++) { clearanceOptions += `<option value="${i}" ${state[item.id].clearance === i ? 'selected' : ''}>${i}</option>`; }
+        let freshOptions = '<option value="0">現:0</option>';
+        for (let i = 1; i <= 30; i++) { freshOptions += `<option value="${i}" ${state[item.id].fresh === i ? 'selected' : ''}>現:${i}</option>`; }
+        let clearanceOptions = '<option value="0">即:0</option>';
+        for (let i = 1; i <= 30; i++) { clearanceOptions += `<option value="${i}" ${state[item.id].clearance === i ? 'selected' : ''}>即:${i}</option>`; }
+        
         card.innerHTML = `
-          <div class="item-header">
-            <span class="item-name">${item.name}</span>
-            <span class="item-subtotal" id="subtotal-${item.id}">$0</span>
+          <div>
+            <div class="item-name" title="${item.name}">${item.name}</div>
+            <div class="price-tag"><span>$${item.freshPrice}</span><span style="color:#e65100;">即$${item.clearancePrice}</span></div>
           </div>
-          <div class="price-row">
-            <div><span class="badge badge-fresh">當天現做</span> <span class="price-text">$${item.freshPrice} 元</span></div>
+          <div class="qty-row">
             <select class="qty-select" onchange="updateQty('${item.id}', 'fresh', this.value)">${freshOptions}</select>
-          </div>
-          <div class="price-row">
-            <div><span class="badge badge-clearance">前批即期</span> <span class="price-text">$${item.clearancePrice} 元 (-$2)</span></div>
             <select class="qty-select" onchange="updateQty('${item.id}', 'clearance', this.value)">${clearanceOptions}</select>
           </div>
         `;
@@ -148,7 +145,6 @@
       items.forEach(item => {
         const freshQty = state[item.id].fresh, clearanceQty = state[item.id].clearance;
         const subtotal = (freshQty * item.freshPrice) + (clearanceQty * item.clearancePrice);
-        document.getElementById(`subtotal-${item.id}`).innerText = `$${subtotal}`;
         totalQty += (freshQty + clearanceQty);
         totalPrice += subtotal;
       });
@@ -168,25 +164,18 @@
       if (giftCount > 0) {
         giftContainer.style.display = 'block';
 
-        // 依照使用者點選順序，把所有選購的單品平鋪展開成陣列
         let allPurchasedItems = [];
         items.forEach(item => {
           const freshQty = state[item.id].fresh;
           const clearanceQty = state[item.id].clearance;
-          for (let i = 0; i < freshQty; i++) {
-            allPurchasedItems.push({ id: item.id, name: item.name, price: item.freshPrice });
-          }
-          for (let i = 0; i < clearanceQty; i++) {
-            allPurchasedItems.push({ id: item.id, name: item.name, price: item.clearancePrice });
-          }
+          for (let i = 0; i < freshQty; i++) { allPurchasedItems.push({ id: item.id, name: item.name, price: item.freshPrice }); }
+          for (let i = 0; i < clearanceQty; i++) { allPurchasedItems.push({ id: item.id, name: item.name, price: item.clearancePrice }); }
         });
 
-        // 依照每 10 顆為一個區間切分群組
         let groupMaxPrices = [];
         for (let g = 0; g < giftCount; g++) {
           let chunk = allPurchasedItems.slice(g * 10, (g + 1) * 10);
           if (chunk.length > 0) {
-            // 找出這 10 顆裡面的最低單價
             let minPriceInChunk = Math.min(...chunk.map(i => i.price));
             groupMaxPrices.push(minPriceInChunk);
           } else {
@@ -194,7 +183,6 @@
           }
         }
 
-        // 初始化或調整贈品選擇陣列
         if (selectedGifts.length !== giftCount) {
           selectedGifts = [];
           for (let i = 0; i < giftCount; i++) {
@@ -208,17 +196,12 @@
         for (let i = 0; i < giftCount; i++) {
           const div = document.createElement('div');
           div.className = 'gift-row';
-
           let maxPrice = groupMaxPrices[i];
-
-          // 限制當前贈品下拉選單只能選擇價格小於或等於該組最低價的品項
           let allowedItems = items.filter(item => item.freshPrice <= maxPrice);
           if (allowedItems.length === 0) allowedItems = items;
 
-          // 檢查目前已選的贈品是否還在允許範圍內，如果超過上限則自動修正
           let currentSelectedId = selectedGifts[i];
-          let isValid = allowedItems.some(it => it.id === currentSelectedId);
-          if (!isValid) {
+          if (!allowedItems.some(it => it.id === currentSelectedId)) {
             selectedGifts[i] = allowedItems[0].id;
           }
 
@@ -228,10 +211,8 @@
           }).join('');
 
           div.innerHTML = `
-            <label style="font-size: 0.85rem; color: #2e7d32; font-weight: bold;">贈品 ${i + 1} （第 ${i*10+1}~${(i+1)*10} 顆區間，限選 $${maxPrice} 以下）：</label>
-            <select onchange="updateGiftSelection(${i}, this.value)">
-              ${options}
-            </select>
+            <label style="font-size: 0.75rem; color: #2e7d32; font-weight: bold;">贈品 ${i + 1} (限 $${maxPrice} 以下)：</label>
+            <select onchange="updateGiftSelection(${i}, this.value)">${options}</select>
           `;
           giftSelects.appendChild(div);
         }
@@ -256,11 +237,11 @@
         const freshQty = state[item.id].fresh, clearanceQty = state[item.id].clearance;
         if (freshQty > 0) {
           hasItems = true; totalItemCount += freshQty;
-          summaryList.innerHTML += `<li class="summary-item"><span>${item.name} (當天現做) × ${freshQty}</span><span>$${freshQty * item.freshPrice}</span></li>`;
+          summaryList.innerHTML += `<li class="summary-item"><span>${item.name}(現)×${freshQty}</span><span>$${freshQty * item.freshPrice}</span></li>`;
         }
         if (clearanceQty > 0) {
           hasItems = true; totalItemCount += clearanceQty;
-          summaryList.innerHTML += `<li class="summary-item"><span>${item.name} (前批即期) × ${clearanceQty}</span><span>$${clearanceQty * item.clearancePrice}</span></li>`;
+          summaryList.innerHTML += `<li class="summary-item"><span>${item.name}(即)×${clearanceQty}</span><span>$${clearanceQty * item.clearancePrice}</span></li>`;
         }
       });
 
@@ -268,7 +249,7 @@
         selectedGifts.forEach((giftId, index) => {
           const giftItem = items.find(i => i.id === giftId);
           if (giftItem) {
-            summaryList.innerHTML += `<li class="summary-item gift-tag"><span>🎁 贈品 ${index + 1}：${giftItem.name}</span><span>免費 ($0)</span></li>`;
+            summaryList.innerHTML += `<li class="summary-item gift-tag"><span>🎁 贈品${index+1}：${giftItem.name}</span><span>免費</span></li>`;
           }
         });
       }
@@ -277,7 +258,7 @@
         summaryList.innerHTML = '<li class="summary-item" style="color: #888; justify-content: center;">請在上方選擇商品數量</li>';
         detailCountTag.innerText = '尚未選購';
       } else {
-        detailCountTag.innerText = `共 ${totalItemCount} 顆 + 贈品 ${giftCount} 顆`;
+        detailCountTag.innerText = `共${totalItemCount}顆+贈${giftCount}`;
       }
     }
 
@@ -288,7 +269,7 @@
       const change = cash - totalPrice;
       const changeEl = document.getElementById('change-amount');
       if (cash > 0) {
-        changeEl.innerText = change >= 0 ? `$${change}` : `還差 $${Math.abs(change)}`;
+        changeEl.innerText = change >= 0 ? `$${change}` : `差$${Math.abs(change)}`;
         changeEl.style.color = change >= 0 ? '#2e7d32' : '#d9534f';
       } else {
         changeEl.innerText = '$0';
@@ -306,7 +287,7 @@
 
     function completeOrder() {
       if (parseInt(document.getElementById('total-qty').innerText, 10) === 0) { alert('尚未選擇任何商品！'); return; }
-      alert('訂單完成！按下確定後將清空畫面準備下一筆交易。');
+      alert('訂單完成！清空畫面準備下一筆交易。');
       resetForm();
     }
 
