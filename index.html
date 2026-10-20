@@ -61,7 +61,7 @@
 <body>
   <header>
     <h1>🥟 包子饅頭 POS 收銀機</h1>
-    <div class="promo-banner">優惠：滿 10 顆送 1 顆（今日/昨日精簡版）</div>
+    <div class="promo-banner">優惠：滿 10 顆送 1 顆（精簡對齊版）</div>
   </header>
   <div class="container">
     <div id="menu-container" class="menu-grid"></div>
@@ -185,16 +185,20 @@
       if (giftCount > 0) {
         giftContainer.style.display = 'block';
 
-        // 收集所有已購買的品項物件（包含其原價，用來比對品項價格高低）
+        // 收集所有已購買的單品，記錄其「實際購買價格」與「所屬品項ID」
         let allPurchasedItems = [];
         items.forEach(item => {
           const freshQty = state[item.id].fresh;
           const clearanceQty = state[item.id].clearance;
-          for (let i = 0; i < freshQty; i++) { allPurchasedItems.push({ id: item.id, name: item.name, price: item.freshPrice }); }
-          for (let i = 0; i < clearanceQty; i++) { allPurchasedItems.push({ id: item.id, name: item.name, price: item.freshPrice }); } // 贈品上限以該品項的標準今日價格來判定可選擇的品項範圍
+          for (let i = 0; i < freshQty; i++) { 
+            allPurchasedItems.push({ id: item.id, name: item.name, price: item.freshPrice }); 
+          }
+          for (let i = 0; i < clearanceQty; i++) { 
+            allPurchasedItems.push({ id: item.id, name: item.name, price: item.clearancePrice }); 
+          }
         });
 
-        // 每 10 顆為一組，找出該組中價格最低的品項價格
+        // 每 10 顆為一組，找出該組中實際價格最低的那顆的價格
         let groupMaxPrices = [];
         for (let g = 0; g < giftCount; g++) {
           let chunk = allPurchasedItems.slice(g * 10, (g + 1) * 10);
@@ -210,6 +214,7 @@
           selectedGifts = [];
           for (let i = 0; i < giftCount; i++) {
             let maxP = groupMaxPrices[i];
+            // 預選符合該價格上限的品項
             let defaultItem = items.find(it => it.freshPrice <= maxP) || items[0];
             selectedGifts.push(defaultItem.id);
           }
@@ -221,8 +226,8 @@
           div.className = 'gift-row';
           let maxPrice = groupMaxPrices[i];
           
-          // 允許選擇標準價格小於或等於該組最低品項價格的任何品項
-          let allowedItems = items.filter(item => item.freshPrice <= maxPrice);
+          // 允許選擇「今日價格」小於或等於該組最低購買價格的品項（確保筍包 $23 可以解鎖讓您可以選）
+          let allowedItems = items.filter(item => item.freshPrice <= maxPrice || item.clearancePrice <= maxPrice);
           if (allowedItems.length === 0) allowedItems = items;
 
           let currentSelectedId = selectedGifts[i];
@@ -236,7 +241,7 @@
           }).join('');
 
           div.innerHTML = `
-            <label style="font-size: 0.75rem; color: #2e7d32; font-weight: bold;">贈品 ${i + 1} (限選 $${maxPrice} 以下品項)：</label>
+            <label style="font-size: 0.75rem; color: #2e7d32; font-weight: bold;">贈品 ${i + 1} (限 $${maxPrice} 以下品項)：</label>
             <select onchange="updateGiftSelection(${i}, this.value)">${options}</select>
           `;
           giftSelects.appendChild(div);
