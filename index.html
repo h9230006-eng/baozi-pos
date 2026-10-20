@@ -61,7 +61,7 @@
 <body>
   <header>
     <h1>🥟 包子饅頭 POS 收銀機</h1>
-    <div class="promo-banner">優惠：滿 10 顆送 1 顆（精簡對齊版）</div>
+    .promo-banner { font-size: 0.78rem; background: rgba(255, 255, 255, 0.2); padding: 2px 6px; border-radius: 10px; display: inline-block; }
   </header>
   <div class="container">
     <div id="menu-container" class="menu-grid"></div>
@@ -185,7 +185,6 @@
       if (giftCount > 0) {
         giftContainer.style.display = 'block';
 
-        // 收集所有已購買的單品，記錄其「實際購買價格」與「所屬品項ID」
         let allPurchasedItems = [];
         items.forEach(item => {
           const freshQty = state[item.id].fresh;
@@ -198,7 +197,6 @@
           }
         });
 
-        // 每 10 顆為一組，找出該組中實際價格最低的那顆的價格
         let groupMaxPrices = [];
         for (let g = 0; g < giftCount; g++) {
           let chunk = allPurchasedItems.slice(g * 10, (g + 1) * 10);
@@ -214,7 +212,6 @@
           selectedGifts = [];
           for (let i = 0; i < giftCount; i++) {
             let maxP = groupMaxPrices[i];
-            // 預選符合該價格上限的品項
             let defaultItem = items.find(it => it.freshPrice <= maxP) || items[0];
             selectedGifts.push(defaultItem.id);
           }
@@ -226,8 +223,8 @@
           div.className = 'gift-row';
           let maxPrice = groupMaxPrices[i];
           
-          // 允許選擇「今日價格」小於或等於該組最低購買價格的品項（確保筍包 $23 可以解鎖讓您可以選）
-          let allowedItems = items.filter(item => item.freshPrice <= maxPrice || item.clearancePrice <= maxPrice);
+          // 嚴格修正：贈品選單只能選擇「今日標準價格」小於或等於該組最低價限制的品項
+          let allowedItems = items.filter(item => item.freshPrice <= maxPrice);
           if (allowedItems.length === 0) allowedItems = items;
 
           let currentSelectedId = selectedGifts[i];
