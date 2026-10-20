@@ -20,13 +20,21 @@
     .promo-banner { font-size: 0.78rem; background: rgba(255, 255, 255, 0.2); padding: 2px 6px; border-radius: 10px; display: inline-block; }
     .container { max-width: 600px; margin: 0 auto; padding: 8px; }
     
-    /* 改為每行 2 個（兩欄式），確保完全在畫面內不跑版 */
+    /* 兩欄式精簡排版 */
     .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
-    .item-card { background: var(--card-bg); border-radius: 10px; padding: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); display: flex; flex-direction: column; justify-content: space-between; border: 1px solid #e0e0e0; }
-    .item-name { font-size: 0.95rem; font-weight: bold; margin-bottom: 6px; }
-    .price-tag { font-size: 0.85rem; color: #666; margin-bottom: 6px; display: flex; justify-content: space-between; }
-    .qty-row { display: flex; gap: 6px; }
-    select.qty-select { font-size: 0.9rem; padding: 4px; border-radius: 6px; border: 1px solid #ccc; background-color: #f8f9fa; flex: 1; text-align: center; font-weight: bold; }
+    .item-card { background: var(--card-bg); border-radius: 10px; padding: 8px 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); display: flex; flex-direction: column; justify-content: space-between; border: 1px solid #e0e0e0; }
+    
+    .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
+    .item-name { font-size: 0.88rem; font-weight: bold; }
+    .item-subtotal { font-size: 0.82rem; font-weight: bold; color: #1a73e8; }
+    
+    .card-prices { display: flex; gap: 8px; font-size: 0.78rem; color: #666; margin-bottom: 4px; }
+    .clearance-price { color: var(--clearance-color); }
+
+    .card-selectors { display: flex; gap: 6px; align-items: center; }
+    .selector-col { flex: 1; display: flex; flex-direction: column; gap: 1px; }
+    .selector-label { font-size: 0.7rem; color: #555; font-weight: bold; text-align: center; }
+    select.qty-select { font-size: 0.85rem; padding: 3px; border-radius: 6px; border: 1px solid #ccc; background-color: #f8f9fa; text-align: center; font-weight: bold; width: 100%; }
 
     .gift-container { background: #e8f5e9; border: 2px dashed #2e7d32; border-radius: 10px; padding: 10px; margin-bottom: 10px; }
     .gift-title { color: #2e7d32; font-weight: bold; font-size: 0.9rem; margin-bottom: 6px; }
@@ -55,7 +63,7 @@
 <body>
   <header>
     <h1>🥟 包子饅頭 POS 收銀機</h1>
-    <div class="promo-banner">優惠：滿 10 顆送 1 顆（兩欄精簡版）</div>
+    <div class="promo-banner">優惠：滿 10 顆送 1 顆（精簡對齊版）</div>
   </header>
   <div class="container">
     <div id="menu-container" class="menu-grid"></div>
@@ -116,22 +124,40 @@
       items.forEach(item => {
         const card = document.createElement('div');
         card.className = 'item-card';
-        let freshOptions = '<option value="0">現:0</option>';
-        for (let i = 1; i <= 30; i++) { freshOptions += `<option value="${i}" ${state[item.id].fresh === i ? 'selected' : ''}>現:${i}</option>`; }
-        let clearanceOptions = '<option value="0">即:0</option>';
-        for (let i = 1; i <= 30; i++) { clearanceOptions += `<option value="${i}" ${state[item.id].clearance === i ? 'selected' : ''}>即:${i}</option>`; }
+        
+        let numOptions = '';
+        for (let i = 0; i <= 30; i++) { numOptions += `<option value="${i}">${i}</option>`; }
         
         card.innerHTML = `
           <div>
-            <div class="item-name">${item.name}</div>
-            <div class="price-tag"><span>$${item.freshPrice}</span><span style="color:#e65100;">即$${item.clearancePrice}</span></div>
-          </div>
-          <div class="qty-row">
-            <select class="qty-select" onchange="updateQty('${item.id}', 'fresh', this.value)">${freshOptions}</select>
-            <select class="qty-select" onchange="updateQty('${item.id}', 'clearance', this.value)">${clearanceOptions}</select>
+            <div class="card-top">
+              <span class="item-name">${item.name}</span>
+              <span class="item-subtotal" id="subtext-${item.id}">合計$0</span>
+            </div>
+            <div class="card-prices">
+              <span>$${item.freshPrice}</span>
+              <span class="clearance-price">即$${item.clearancePrice}</span>
+            </div>
+            <div class="card-selectors">
+              <div class="selector-col">
+                <span class="selector-label">現</span>
+                <select class="qty-select" id="fresh-${item.id}" onchange="updateQty('${item.id}', 'fresh', this.value)">
+                  ${numOptions}
+                </select>
+              </div>
+              <div class="selector-col">
+                <span class="selector-label">即</span>
+                <select class="qty-select" id="clearance-${item.id}" onchange="updateQty('${item.id}', 'clearance', this.value)">
+                  ${numOptions}
+                </select>
+              </div>
+            </div>
           </div>
         `;
         container.appendChild(card);
+        
+        document.getElementById(`fresh-${item.id}`).value = state[item.id].fresh;
+        document.getElementById(`clearance-${item.id}`).value = state[item.id].clearance;
       });
     }
 
@@ -145,6 +171,7 @@
       items.forEach(item => {
         const freshQty = state[item.id].fresh, clearanceQty = state[item.id].clearance;
         const subtotal = (freshQty * item.freshPrice) + (clearanceQty * item.clearancePrice);
+        document.getElementById(`subtext-${item.id}`).innerText = `合計$${subtotal}`;
         totalQty += (freshQty + clearanceQty);
         totalPrice += subtotal;
       });
