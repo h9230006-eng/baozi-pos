@@ -98,4 +98,146 @@
       { id: 'item5', name: '牛奶饅頭', freshPrice: 20, clearancePrice: 18 },
       { id: 'item6', name: '蔓越莓饅頭', freshPrice: 20, clearancePrice: 18 },
       { id: 'item7', name: '桂圓饅頭', freshPrice: 22, clearancePrice: 20 },
-      { id: 'item8', name: '雜糧饅頭', freshPrice: 2
+      { id: 'item8', name: '雜糧饅頭', freshPrice: 22, clearancePrice: 20 },
+      { id: 'item9', name: '芝麻包', freshPrice: 22, clearancePrice: 20 },
+      { id: 'item10', name: '豆沙包', freshPrice: 22, clearancePrice: 20 },
+      { id: 'item11', name: '起司捲', freshPrice: 24, clearancePrice: 22 },
+      { id: 'item12', name: '筍包', freshPrice: 25, clearancePrice: 23 },
+      { id: 'item13', name: '肉包', freshPrice: 28, clearancePrice: 26 }
+    ];
+    const state = {};
+    items.forEach(item => { state[item.id] = { fresh: 0, clearance: 0 }; });
+    let selectedGifts = [];
+    function renderMenu() {
+      const container = document.getElementById('menu-container');
+      container.innerHTML = '';
+      items.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'item-card';
+        let freshOptions = '';
+        for (let i = 0; i <= 30; i++) { freshOptions += `<option value="${i}" ${state[item.id].fresh === i ? 'selected' : ''}>${i}</option>`; }
+        let clearanceOptions = '';
+        for (let i = 0; i <= 30; i++) { clearanceOptions += `<option value="${i}" ${state[item.id].clearance === i ? 'selected' : ''}>${i}</option>`; }
+        card.innerHTML = `
+          <div class="item-header">
+            <span class="item-name">${item.name}</span>
+            <span class="item-subtotal" id="subtotal-${item.id}">$0</span>
+          </div>
+          <div class="price-row">
+            <div><span class="badge badge-fresh">當天現做</span> <span class="price-text">$${item.freshPrice} 元</span></div>
+            <select class="qty-select" onchange="updateQty('${item.id}', 'fresh', this.value)">${freshOptions}</select>
+          </div>
+          <div class="price-row">
+            <div><span class="badge badge-clearance">前批即期</span> <span class="price-text">$${item.clearancePrice} 元 (-$2)</span></div>
+            <select class="qty-select" onchange="updateQty('${item.id}', 'clearance', this.value)">${clearanceOptions}</select>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+    function updateQty(itemId, type, value) {
+      state[itemId][type] = parseInt(value, 10);
+      calculateTotal();
+    }
+    function calculateTotal() {
+      let totalQty = 0, totalPrice = 0;
+      items.forEach(item => {
+        const freshQty = state[item.id].fresh, clearanceQty = state[item.id].clearance;
+        const subtotal = (freshQty * item.freshPrice) + (clearanceQty * item.clearancePrice);
+        document.getElementById(`subtotal-${item.id}`).innerText = `$${subtotal}`;
+        totalQty += (freshQty + clearanceQty);
+        totalPrice += subtotal;
+      });
+      document.getElementById('total-qty').innerText = totalQty;
+      document.getElementById('total-price').innerText = `$${totalPrice}`;
+      const giftCount = Math.floor(totalQty / 10);
+      updateGiftSection(giftCount);
+      updateSummaryDetail(giftCount);
+      calculateChange();
+    }
+    function updateGiftSection(giftCount) {
+      const giftContainer = document.getElementById('gift-container');
+      const giftSelects = document.getElementById('gift-selects');
+      document.getElementById('gift-count').innerText = giftCount;
+      if (giftCount > 0) {
+        giftContainer.style.display = 'block';
+        while (selectedGifts.length < giftCount) { selectedGifts.push(items[0].id); }
+        if (selectedGifts.length > giftCount) { selectedGifts = selectedGifts.slice(0, giftCount); }
+        giftSelects.innerHTML = '';
+        for (let i = 0; i < giftCount; i++) {
+          const div = document.createElement('div');
+          div.className = 'gift-row';
+          let options = items.map(item => `<option value="${item.id}" ${selectedGifts[i] === item.id ? 'selected' : ''}>${item.name} ($${item.freshPrice})</option>`).join('');
+          div.innerHTML = `<label style="font-size: 0.85rem; color: #333; font-weight: bold;">贈品 ${i + 1} ：</label><select onchange="updateGiftSelection(${i}, this.value)">${options}</select>`;
+          giftSelects.appendChild(div);
+        }
+      } else {
+        giftContainer.style.display = 'none';
+        selectedGifts = [];
+      }
+    }
+    function updateGiftSelection(index, itemId) {
+      selectedGifts[index] = itemId;
+      updateSummaryDetail(selectedGifts.length);
+    }
+    function updateSummaryDetail(giftCount) {
+      const summaryList = document.getElementById('summary-list');
+      const detailCountTag = document.getElementById('detail-count-tag');
+      summaryList.innerHTML = '';
+      let hasItems = false, totalItemCount = 0;
+      items.forEach(item => {
+        const freshQty = state[item.id].fresh, clearanceQty = state[item.id].clearance;
+        if (freshQty > 0) {
+          hasItems = true; totalItemCount += freshQty;
+          summaryList.innerHTML += `<li class="summary-item"><span>${item.name} (當天現做) × ${freshQty}</span><span>$${freshQty * item.freshPrice}</span></li>`;
+        }
+        if (clearanceQty > 0) {
+          hasItems = true; totalItemCount += clearanceQty;
+          summaryList.innerHTML += `<li class="summary-item"><span>${item.name} (前批即期) × ${clearanceQty}</span><span>$${clearanceQty * item.clearancePrice}</span></li>`;
+        }
+      });
+      if (giftCount > 0) {
+        selectedGifts.forEach((giftId, index) => {
+          const giftItem = items.find(i => i.id === giftId);
+          if (giftItem) {
+            summaryList.innerHTML += `<li class="summary-item gift-tag"><span>🎁 贈品 ${index + 1}：${giftItem.name}</span><span>免費 ($0)</span></li>`;
+          }
+        });
+      }
+      if (!hasItems) {
+        summaryList.innerHTML = '<li class="summary-item" style="color: #888; justify-content: center;">請在上方選擇商品數量</li>';
+        detailCountTag.innerText = '尚未選購';
+      } else {
+        detailCountTag.innerText = `共 ${totalItemCount} 顆 + 贈品 ${giftCount} 顆`;
+      }
+    }
+    function calculateChange() {
+      const cash = parseFloat(document.getElementById('cash-input').value) || 0;
+      let totalPrice = 0;
+      items.forEach(item => { totalPrice += (state[item.id].fresh * item.freshPrice) + (state[item.id].clearance * item.clearancePrice); });
+      const change = cash - totalPrice;
+      const changeEl = document.getElementById('change-amount');
+      if (cash > 0) {
+        changeEl.innerText = change >= 0 ? `$${change}` : `還差 $${Math.abs(change)}`;
+        changeEl.style.color = change >= 0 ? '#2e7d32' : '#d9534f';
+      } else {
+        changeEl.innerText = '$0';
+        changeEl.style.color = '#2e7d32';
+      }
+    }
+    function resetForm() {
+      items.forEach(item => { state[item.id] = { fresh: 0, clearance: 0 }; });
+      document.getElementById('cash-input').value = '';
+      selectedGifts = [];
+      renderMenu();
+      calculateTotal();
+    }
+    function completeOrder() {
+      if (parseInt(document.getElementById('total-qty').innerText, 10) === 0) { alert('尚未選擇任何商品！'); return; }
+      alert('訂單完成！按下確定後將清空畫面準備下一筆交易。');
+      resetForm();
+    }
+    renderMenu();
+  </script>
+</body>
+</html>
