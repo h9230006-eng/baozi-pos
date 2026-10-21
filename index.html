@@ -190,10 +190,10 @@
           const freshQty = state[item.id].fresh;
           const clearanceQty = state[item.id].clearance;
           for (let i = 0; i < freshQty; i++) { 
-            allPurchasedItems.push({ id: item.id, name: item.name, price: item.freshPrice }); 
+            allPurchasedItems.push({ id: item.id, name: item.name, price: item.freshPrice, displayPrice: item.freshPrice }); 
           }
           for (let i = 0; i < clearanceQty; i++) { 
-            allPurchasedItems.push({ id: item.id, name: item.name, price: item.clearancePrice }); 
+            allPurchasedItems.push({ id: item.id, name: item.name, price: item.clearancePrice, displayPrice: item.freshPrice }); 
           }
         });
 
@@ -208,7 +208,6 @@
           }
         }
 
-        // 保留舊有選項，僅對增減欄位進行調整
         if (selectedGifts.length < giftCount) {
           for (let i = selectedGifts.length; i < giftCount; i++) {
             let maxP = groupMaxPrices[i];
@@ -225,6 +224,7 @@
           div.className = 'gift-row';
           let maxPrice = groupMaxPrices[i];
           
+          // 修正：用 freshPrice 判斷是否小於等於該組最低單價，讓 18 元的黑糖昨日也能選到 20 元以內的品項
           let allowedItems = items.filter(item => item.freshPrice <= maxPrice);
           if (allowedItems.length === 0) allowedItems = items;
 
