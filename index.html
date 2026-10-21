@@ -208,13 +208,15 @@
           }
         }
 
-        if (selectedGifts.length !== giftCount) {
-          selectedGifts = [];
-          for (let i = 0; i < giftCount; i++) {
+        // 保留舊有選項，僅對增減欄位進行調整
+        if (selectedGifts.length < giftCount) {
+          for (let i = selectedGifts.length; i < giftCount; i++) {
             let maxP = groupMaxPrices[i];
             let defaultItem = items.find(it => it.freshPrice <= maxP) || items[0];
             selectedGifts.push(defaultItem.id);
           }
+        } else if (selectedGifts.length > giftCount) {
+          selectedGifts = selectedGifts.slice(0, giftCount);
         }
 
         giftSelects.innerHTML = '';
